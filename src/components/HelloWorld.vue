@@ -1,58 +1,135 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+    <ul class="primary__numbers">
+      <li v-for="item in primary" :key="item">{{item}}</li>
     </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+      <ul class="list">
+        <item v-for="(item, index) in numbers" :item="item" :key="time + index">
+          <span>{{index}}</span>
+        </item>
+      </ul>
+      <button class="recalc" @click="recalculate">Calc</button>
   </div>
 </template>
 
 <script>
+import * as dat from 'dat.gui';
+import item from './item';
+const colors = ['#BDBDBD', '#448AFF', '#F8BBD0', '#E91E63', '#C2185B'];
+function randomColor() {
+  let index = Math.floor(Math.random() * colors.length);
+  return colors[index];
+}
+
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String,
+  data() {
+    return {
+      numbers: [],
+      speed: 100,
+      time: Date.now(),
+      primary: [],
+      status: false,
+    };
+  },
+  methods: {
+    wait() {
+      return new Promise((resolve) => {
+        setTimeout(() => resolve(), this.speed);
+      });
+    },
+    rend() {
+      this.time = Date.now();
+      let obj = JSON.stringify({cross: false, color: '#ffffff'});
+      this.numbers = new Array(101).fill('').map(() => JSON.parse(obj));
+      this.primary = [];
+    },
+    async recalculate() {
+      if (this.status) {
+        return
+      }
+      this.rend();
+      this.status = true;
+      for (let i = 2; i < this.numbers.length; i++) {
+        let color = randomColor();
+        if (this.numbers[i].cross === false) {
+          for (let j = i * i; j < this.numbers.length; j += i) {
+            await this.wait();
+            this.numbers[j].cross = true;
+            this.numbers[j].color = color;
+          }
+        }
+      }
+      this.getPrime();
+    },
+    getPrime() {
+      for (const [index, item] of this.numbers.entries()) {
+        if (item.cross === false && index > 1) {
+          item.color = 'green';
+          item.cross = true;
+          this.primary.push(index);
+        }
+      }
+      this.status = false;
+    }
+  },
+  components: {
+    item
+  },
+  mounted() {
+    this.rend();
+    this.gui = new dat.GUI();
+    this.gui.add(this, 'speed', 100, 5000);
+
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style lang="scss">
+ .list {
+   display: flex;
+   list-style: none;
+   padding-left: 0;
+   margin-top: 0;
+   width: 100vw;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+   align-content: center;
+   min-height: 100vh;
+ }
+  .item {
+    width: 5vw;
+    height: 5vw;
+    border: 1px solid grey;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+  html {
+    padding: 0;
+    margin: 0;
+  }
+  .recalc {
+    position: fixed;
+    top: 10px;
+    left: 40px;
+  }
+
+  .primary__numbers {
+    position: absolute;
+    right: 20px;
+    top: 40px;
+    display: flex;
+    list-style: none;
+    li {
+      margin-right: 5px;
+    }
+  }
 </style>
