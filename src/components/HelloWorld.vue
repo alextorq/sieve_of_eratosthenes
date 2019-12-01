@@ -4,8 +4,10 @@
       <li v-for="item in primary" :key="item">{{item}}</li>
     </ul>
       <ul class="list">
-        <item v-for="(item, index) in numbers" :item="item" :key="time + index">
-          <span>{{index}}</span>
+        <item v-for="(item, index) in filterNumbers"
+              :item="item"
+              :key="time + index">
+         {{index + 2}}
         </item>
       </ul>
       <button class="recalc" @click="recalculate">Calc</button>
@@ -15,10 +17,15 @@
 <script>
 import * as dat from 'dat.gui';
 import item from './item';
-const colors = ['#BDBDBD', '#448AFF', '#F8BBD0', '#E91E63', '#C2185B'];
-function randomColor() {
-  let index = Math.floor(Math.random() * colors.length);
-  return colors[index];
+
+
+function RandomColor() {
+  let color = null;
+  const colors = ['#00d6c8', '#448AFF', '#F8BBD0', '#E91E63', '#C2185B', '#34f81b'];
+  return () => {
+    color = (color === null) ? 0 : (color + 1);
+    return colors[color];
+  }
 }
 
 export default {
@@ -32,6 +39,11 @@ export default {
       status: false,
     };
   },
+  computed: {
+    filterNumbers() {
+      return this.numbers.filter((item, index) => index > 1)
+    }
+  },
   methods: {
     wait() {
       return new Promise((resolve) => {
@@ -40,7 +52,7 @@ export default {
     },
     rend() {
       this.time = Date.now();
-      let obj = JSON.stringify({cross: false, color: '#ffffff'});
+      let obj = JSON.stringify({cross: false, border: 'transparent', color: '#ffffff'});
       this.numbers = new Array(101).fill('').map(() => JSON.parse(obj));
       this.primary = [];
     },
@@ -50,13 +62,18 @@ export default {
       }
       this.rend();
       this.status = true;
+      const colorGen = new RandomColor();
       for (let i = 2; i < this.numbers.length; i++) {
-        let color = randomColor();
+        const color = colorGen();
         if (this.numbers[i].cross === false) {
+          this.numbers[i].border = color;
+          this.primary.push(i);
           for (let j = i * i; j < this.numbers.length; j += i) {
-            await this.wait();
-            this.numbers[j].cross = true;
-            this.numbers[j].color = color;
+            if (this.numbers[j].cross === false) {
+              await this.wait();
+              this.numbers[j].cross = true;
+              this.numbers[j].color = color;
+            }
           }
         }
       }
@@ -65,9 +82,8 @@ export default {
     getPrime() {
       for (const [index, item] of this.numbers.entries()) {
         if (item.cross === false && index > 1) {
-          item.color = 'green';
+          item.color = '#b5ff38';
           item.cross = true;
-          this.primary.push(index);
         }
       }
       this.status = false;
@@ -87,11 +103,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+  * {
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', cursive;
+  }
  .list {
    display: flex;
    list-style: none;
    padding-left: 0;
-   margin-top: 0;
+   margin: 0;
    width: 100vw;
    flex-wrap: wrap;
    justify-content: center;
@@ -106,6 +126,19 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-weight: 400;
+    span {
+      padding: 5px;
+      line-height: 1;
+      border-radius: 50%;
+      border-width: 3px;
+      border-style: solid;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
   body {
     padding: 0;
@@ -130,6 +163,7 @@ export default {
     list-style: none;
     li {
       margin-right: 5px;
+      /*color: #b5ff38;*/
     }
   }
 </style>
