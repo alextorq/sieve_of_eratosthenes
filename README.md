@@ -1,29 +1,17 @@
-# sieve_of_eratosthenes
+# Sieve of Eratosthenes
+
+In mathematics, the Sieve of Eratosthenes is a simple, 
+ancient algorithm for finding all prime numbers up to any given limit.
+
+Visualisation of algorithm by js.
+Used Vue.
 
 ## Project setup
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
+### Compiles for production
 ```
 yarn run build
 ```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
