@@ -1,16 +1,25 @@
 <template>
   <div class="hello">
     <ul class="primary__numbers">
-      <li v-for="item in primary" :key="item">{{item}}</li>
+      <li
+          v-for="item in primary"
+          :key="item">
+          {{item}}
+      </li>
     </ul>
       <ul class="list">
-        <item v-for="(item, index) in filterNumbers"
-              :item="item"
-              :key="time + index">
-         {{index + 2}}
+        <item
+            v-for="(item, index) in filterNumbers"
+            :item="item"
+            :key="time + index">
+          {{index + 2}}
         </item>
       </ul>
-      <button class="recalc" @click="recalculate">Calc</button>
+      <button
+          class="recalc"
+          @click="recalculate">
+        Calc
+      </button>
   </div>
 </template>
 
@@ -18,7 +27,7 @@
 import * as dat from 'dat.gui';
 import item from './item';
 
-
+//Just concept
 function RandomColor() {
   let color = null;
   const colors = ['#00d6c8', '#448AFF', '#F8BBD0', '#E91E63', '#C2185B', '#34f81b'];
@@ -90,13 +99,12 @@ export default {
     }
   },
   components: {
-    item
+    item,
   },
   mounted() {
     this.rend();
     this.gui = new dat.GUI();
     this.gui.add(this, 'speed', 100, 5000);
-
   },
 };
 </script>

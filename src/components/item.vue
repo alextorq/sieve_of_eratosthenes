@@ -1,5 +1,8 @@
 <template>
-  <li class="item" :class="bg" :style="{backgroundColor: item.color}">
+  <li
+      class="item"
+      :class="bg"
+      :style="{backgroundColor: item.color}">
     <span :style="{borderColor: item.border}">
        <slot></slot>
     </span>
