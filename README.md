@@ -6,6 +6,8 @@ ancient algorithm for finding all prime numbers up to any given limit.
 Visualisation of algorithm by js.
 Used Vue.
 
+![alt text](https://github.com/alextorq/sieve_of_eratosthenes/tree/master/src/image/image.png?raw=true)
+
 ## Project setup
 ```
 yarn install
